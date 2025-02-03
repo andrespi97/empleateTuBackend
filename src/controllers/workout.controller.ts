@@ -1,12 +1,12 @@
-import { UserService } from "../services/user.service";
+import { WorkoutService } from "../services/workout.service";
 import { Response, Request, NextFunction } from 'express'
 
-export class OfferController {
+export class WorkoutController {
     static async getById(req: Request, res: Response, next: NextFunction) {
         try {
             const id = Number.parseInt(req.params.id)
             // pasar a entero
-            const offer = await OfferService.getById(id)
+            const offer = await WorkoutService.getById(id)
             res.status(200).json(offer)
         } catch (error) {
             next(error)
@@ -15,7 +15,7 @@ export class OfferController {
 
     static async getAll(req: Request, res: Response, next: NextFunction) {
         try {
-            const user = await OfferService.getAll()
+            const user = await WorkoutService.getAll()
             res.status(200).json(user)
         } catch (error) {
             next(error)
@@ -25,7 +25,7 @@ export class OfferController {
     static async create(req: Request, res: Response, next: NextFunction) {
         try {
             const offerData = req.body
-            const newOffer = await OfferService.create(offerData)
+            const newOffer = await WorkoutService.create(offerData)
             res.status(200).json(newOffer)
         } catch (error) {
             next(error)
@@ -35,7 +35,7 @@ export class OfferController {
         try {
             const offerData = req.body
             const id = Number.parseInt(req.params.id)
-            const updatedOffer = await OfferService.update(id, offerData)
+            const updatedOffer = await WorkoutService.update(id, offerData)
             res.status(200).json(updatedOffer)
         } catch (error) {
             next(error)
@@ -45,7 +45,7 @@ export class OfferController {
     static async delete(req: Request, res: Response, next: NextFunction) {
         try {
             const id = Number.parseInt(req.params.id)
-            const deletedOffer = await OfferService.delete(id)
+            const deletedOffer = await WorkoutService.delete(id)
             res.status(200).json(deletedOffer)
         } catch (error) {
             next(error)
@@ -54,7 +54,7 @@ export class OfferController {
     static async delete(req: Request, res: Response, next: NextFunction) {
         try {
             const id = Number.parseInt(req.params.id)
-            const deletedOffer = await OfferService.delete(id)
+            const deletedOffer = await WorkoutService.delete(id)
             res.status(200).json(deletedOffer)
         } catch (error) {
             next(error)
@@ -66,7 +66,7 @@ export class OfferController {
             const { value } = req.body
             const userId = req.body.user.id
 
-            await OfferService.rate(userId, id, value)
+            await WorkoutService.rate(userId, id, value)
             res.status(200).json({ message: 'Offer rate successfully' })
         } catch (error) {
             next(error)
@@ -77,7 +77,7 @@ export class OfferController {
         try {
             const id = Number.parseInt(req.params.id)
 
-            await OfferService.getRate(id)
+            await WorkoutService.getRate(id)
             res.status(200).json({ message: 'Offer rate successfully' })
         } catch (error) {
             next(error)
