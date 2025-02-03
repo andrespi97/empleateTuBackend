@@ -1,78 +1,123 @@
-// This is your Prisma schema file,
-// learn more about it in the docs: https://pris.ly/d/prisma-schema
-
-// Looking for ways to speed up your queries, or scale easily with your serverless or edge functions?
-// Try Prisma Accelerate: https://pris.ly/cli/accelerate-init
-
 generator client {
   provider = "prisma-client-js"
 }
 
 datasource db {
-  provider = "postgresql"
-  url      = env("DATABASE_URL")
+  provider = "mysql"
+  url      = env("MYSQL_DATABASE_URL")
 }
 
 model User {
-  id        Int   @id   @default(autoincrement())
-  name      String
-  surname   String?
-  email     String  @unique
-  password  String
-  role      String? // admin  vip   null
-  course    String?
-  active    Boolean   @default(true)
-  accepNotifications Boolean @default(true)
-  createdAt   DateTime  @default(now())
-  updatedAt   DateTime  @updatedAt  
-  
-  offers    Offer[]
-  rates     Rate[]
+  id              String           @id @default(uuid())
+  email           String           @unique
+  username        String
+  password        String
+  profileImage    String?          @map("profile_image")
+  role            Role             @default(ATHLETE)
+  gymId           String?          @map("gym_id")
+  gym             Gym?             @relation(fields: [gymId], references: [id])
+  personalRecords PersonalRecord[]
+  workoutLogs     WorkoutLog[]
+  comments        Comment[]
+  responses       Response[]
+
+  active             Boolean  @default(true)
+  accepNotifications Boolean  @default(true)
+  createdAt          DateTime @default(now())
+  updatedAt          DateTime @updatedAt
 }
 
-model Offer {
-  id            Int   @id   @default(autoincrement())
-  title         String
-  description   String?
-  active        Boolean   @default(true)
-  contactEmail  String?
-  location      String? 
-  published     DateTime @default(now()) // iso8601
-  expired       DateTime  // iso8601
+model Workout {
+  id          String       @id @default(uuid())
+  name        String
+  description String?
+  date        DateTime
+  gym_id      String?
+  gym         Gym?         @relation(fields: [gym_id], references: [id])
+  workoutLogs WorkoutLog[]
 
-  createdAt     DateTime  @default(now())
-  updatedAt     DateTime  @updatedAt   
-
-  //FK
-  idCategory    Int?
-  category      Category? @relation(fields: [idCategory], references: [id])
-
-  idUserCreator Int
-  userCreator   User  @relation(fields: [idUserCreator], references: [id])
-
-  rates   Rate[]
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
 }
 
-model Category{
-  id            Int   @id   @default(autoincrement())
-  name          String @unique
+model PersonalRecord {
+  id            String   @id @default(uuid())
+  user_id       String
+  user          User     @relation(fields: [user_id], references: [id])
+  exercise      Exercise
+  record_weight Float?
+  record_time   Int? // Intervalo en segundos
+  gym_id        String?
+  gym           Gym?     @relation(fields: [gym_id], references: [id])
 
-  createdAt     DateTime  @default(now())
-  updatedAt     DateTime  @updatedAt   
-
-  offers       Offer[]
+  @@unique([user_id, exercise, gym_id])
 }
 
-model Rate{
-  idUser  Int
-  idOffer Int
-  value   Int  
+model WorkoutLog {
+  id         String    @id @default(uuid())
+  user_id    String
+  user       User      @relation(fields: [user_id], references: [id])
+  workout_id String
+  workout    Workout   @relation(fields: [workout_id], references: [id])
+  weight     Float?
+  time       Int? // Intervalo en segundos
+  comment    String?
+  gym_id     String?
+  gym        Gym?      @relation(fields: [gym_id], references: [id])
+  comments   Comment[]
+}
 
-  createdAt     DateTime  @default(now())
-  updatedAt     DateTime  @updatedAt   
+model Comment {
+  id             String     @id @default(uuid())
+  workout_log_id String
+  workoutLog     WorkoutLog @relation(fields: [workout_log_id], references: [id])
+  user_id        String
+  user           User       @relation(fields: [user_id], references: [id])
+  message        String
+  createdAt      DateTime   @default(now())
+  gym_id         String?
+  gym            Gym?       @relation(fields: [gym_id], references: [id])
+  responses      Response[]
+}
 
-  user  User  @relation(fields: [idUser], references: [id])
-  offer  Offer  @relation(fields: [idOffer], references: [id])
+model Response {
+  id         String   @id @default(uuid())
+  comment_id String
+  comment    Comment  @relation(fields: [comment_id], references: [id])
+  user_id    String
+  user       User     @relation(fields: [user_id], references: [id])
+  message    String
+  created_at DateTime @default(now())
+  gym_id     String?
+  gym        Gym?     @relation(fields: [gym_id], references: [id])
+}
 
-  @@id([idUser, idOffer])
+model Gym {
+  id              String           @id @default(uuid())
+  name            String
+  location        String?
+  users           User[]
+  workouts        Workout[]
+  personalRecords PersonalRecord[]
+  workoutLogs     WorkoutLog[]
+  comments        Comment[]
+  responses       Response[]
+}
+
+enum Role {
+  COACH
+  ATHLETE
+}
+
+enum Exercise {
+  SQUAT
+  FRONT_SQUAT
+  DEADLIFT
+  BENCH_PRESS
+  SHOULDER_PRESS
+  SNATCH
+  OVERHEAD_SQUAT
+  CLEAN_AND_JERK
+  CLEAN
+  JERK
 }
