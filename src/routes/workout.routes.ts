@@ -13,7 +13,7 @@ router.get('/', WorkoutController.getAll)
 //localhost:3000/api/offerts/xxxx
 router.get('/:id', WorkoutController.getById)
 //POST añadir una oferta nueva localhost:3000/api/offerts/  {body}
-router.post('/', isCoach, WorkoutController.create)
+router.post('/', WorkoutController.create)
 //DELETE Borrar una oferta localhost:3000/api/offerts/XXXX  
 router.delete('/:id', WorkoutController.delete)
 //PUT modificar una oferta localhost:3000/api/offerts/XXXX  {body}
