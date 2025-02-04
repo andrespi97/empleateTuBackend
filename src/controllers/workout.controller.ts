@@ -24,7 +24,7 @@ export class WorkoutController {
 
     static async create(req: Request, res: Response, next: NextFunction) {
         try {
-            const workoutData = req.body
+            const workoutData = req.body.workout
             const newWorkout = await WorkoutService.create(workoutData)
             res.status(200).json(newWorkout)
         } catch (error) {
