@@ -1,18 +1,18 @@
 import { HttpException } from "../exceptions/httpException";
-import { PrismaClient, User } from "@prisma/client";
+import { PrismaClient, Workout } from "@prisma/client";
 const prisma = new PrismaClient()
 
 export class WorkoutService {
 
-    static async getById(id: number) {
-        const findOffer = await prisma.offer.findUnique({ where: { id } })
-        if (!findOffer) throw new HttpException(404, 'Offer not found')
-        return findOffer
+    static async getById(id: string) {
+        const findWorkout = await prisma.workout.findUnique({ where: { id } })
+        if (!findWorkout) throw new HttpException(404, 'Workout not found')
+        return findWorkout
     }
 
     // localhost:3000/api/offer/?title=dam
     static async getAll(title: string = '') {
-        return await prisma.offer.findMany({
+        return await prisma.workout.findMany({
             where: title ? {
                 title: {
                     contains: title
@@ -25,34 +25,33 @@ export class WorkoutService {
         })
     }
 
-    static async create(idUser: number, offer: Offer) {
-        return await prisma.offer.create({
+    static async create(workout: Workout) {
+        return await prisma.workout.create({
             data: {
-                ...offer,
-                idUserCreator: idUser
+                ...workout
             }
         })
     }
 
-    static async update(id: number, offer: Offer) {
-        const findOffer = prisma.offer.findUnique({ where: { id } })
-        if (!findOffer) throw new HttpException(404, 'Offer doesnt exists')
-        return await prisma.offer.update({
+    static async update(id: string, workout: Workout) {
+        const findWorkout = prisma.workout.findUnique({ where: { id } })
+        if (!findWorkout) throw new HttpException(404, 'Workout doesnt exists')
+        return await prisma.workout.update({
             where: { id },
             data: {
-                ...offer,
+                ...workout,
             }
         })
     }
 
-    static async delete(id: number) {
-        return prisma.offer.delete({ where: { id } })
+    static async delete(id: string) {
+        return prisma.workout.delete({ where: { id } })
     }
 
 
     static async rate(id: number) {
-        si existe lo actualizo
-        si no existe lo creo
+        // si existe lo actualizo
+        // si no existe lo creo
     }
 
 
@@ -69,10 +68,5 @@ export class WorkoutService {
     }
 
 
-    static async getAll() {
-        const users = await prisma.user.findMany({
-            omit: { password: true }
-        })
-        return users
-    }
+
 }

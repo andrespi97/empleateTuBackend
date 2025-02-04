@@ -8,18 +8,19 @@ datasource db {
 }
 
 model User {
-  id              String           @id @default(uuid())
-  email           String           @unique
-  username        String
-  password        String
-  profileImage    String?          @map("profile_image")
-  role            Role             @default(ATHLETE)
-  gymId           String?          @map("gym_id")
-  gym             Gym?             @relation(fields: [gymId], references: [id])
-  personalRecords PersonalRecord[]
-  workoutLogs     WorkoutLog[]
-  comments        Comment[]
-  responses       Response[]
+  id           String       @id @default(uuid())
+  email        String       @unique
+  username     String
+  password     String
+  profileImage String?      @map("profile_image")
+  role         Role         @default(ATHLETE)
+  gymId        String?      @map("gym_id")
+  gym          Gym?         @relation(fields: [gymId], references: [id])
+  movementsId  String?      @map("movements_id")
+  movements    Movements?   @relation(fields: [movementsId], references: [id])
+  workoutLogs  WorkoutLog[]
+  comments     Comment[]
+  responses    Response[]
 
   active             Boolean  @default(true)
   accepNotifications Boolean  @default(true)
@@ -27,11 +28,16 @@ model User {
   updatedAt          DateTime @updatedAt
 }
 
+//entrenamiento
 model Workout {
   id          String       @id @default(uuid())
-  name        String
+  title       String
   description String?
   date        DateTime
+  timerType   String?
+  duration    Int?
+  order       Int?
+  exercises   String[]
   gym_id      String?
   gym         Gym?         @relation(fields: [gym_id], references: [id])
   workoutLogs WorkoutLog[]
@@ -40,19 +46,7 @@ model Workout {
   updatedAt DateTime @updatedAt
 }
 
-model PersonalRecord {
-  id            String   @id @default(uuid())
-  user_id       String
-  user          User     @relation(fields: [user_id], references: [id])
-  exercise      Exercise
-  record_weight Float?
-  record_time   Int? // Intervalo en segundos
-  gym_id        String?
-  gym           Gym?     @relation(fields: [gym_id], references: [id])
-
-  @@unique([user_id, exercise, gym_id])
-}
-
+//registro de entrenamiento
 model WorkoutLog {
   id         String    @id @default(uuid())
   user_id    String
@@ -67,6 +61,7 @@ model WorkoutLog {
   comments   Comment[]
 }
 
+//comentario
 model Comment {
   id             String     @id @default(uuid())
   workout_log_id String
@@ -93,31 +88,32 @@ model Response {
 }
 
 model Gym {
-  id              String           @id @default(uuid())
-  name            String
-  location        String?
-  users           User[]
-  workouts        Workout[]
-  personalRecords PersonalRecord[]
-  workoutLogs     WorkoutLog[]
-  comments        Comment[]
-  responses       Response[]
+  id          String       @id @default(uuid())
+  name        String
+  location    String?
+  users       User[]
+  workouts    Workout[]
+  workoutLogs WorkoutLog[]
+  comments    Comment[]
+  responses   Response[]
+}
+
+model Movements {
+  id             String @id @default(uuid())
+  SQUAT          Float?
+  FRONT_SQUAT    Float?
+  DEADLIFT       Float?
+  BENCH_PRESS    Float?
+  SHOULDER_PRESS Float?
+  SNATCH         Float?
+  OVERHEAD_SQUAT Float?
+  CLEAN_AND_JERK Float?
+  CLEAN          Float?
+  JERK           Float?
+  User           User[]
 }
 
 enum Role {
   COACH
   ATHLETE
-}
-
-enum Exercise {
-  SQUAT
-  FRONT_SQUAT
-  DEADLIFT
-  BENCH_PRESS
-  SHOULDER_PRESS
-  SNATCH
-  OVERHEAD_SQUAT
-  CLEAN_AND_JERK
-  CLEAN
-  JERK
 }
