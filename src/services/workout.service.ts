@@ -49,10 +49,10 @@ export class WorkoutService {
     }
 
 
-    static async rate(id: number) {
-        // si existe lo actualizo
-        // si no existe lo creo
-    }
+    // static async rate(id: number) {
+    //     // si existe lo actualizo
+    //     // si no existe lo creo
+    // }
 
 
 
