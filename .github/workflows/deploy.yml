@@ -1,4 +1,4 @@
-name: Deploy a Render
+name: Build and Deploy to Render
 
 on:
   push:
@@ -14,12 +14,15 @@ jobs:
 
       - name: 📦 Instalar dependencias
         run: npm install
+      
+      - name: 🛠️ Generar cliente de Prisma
+        run: npx prisma generate
 
       - name: 🔨 Construir la aplicación
         run: npm run build
 
-      - name: 📤 Subir carpeta `dist` como un artefacto
-        uses: actions/upload-artifact@v4
-        with:
-          name: dist
-          path: dist  # Asegúrate de que "build" es tu carpeta de salida
+    #   - name: 📤 Subir carpeta `dist` como un artefacto
+    #     uses: actions/upload-artifact@v4
+    #     with:
+    #       name: dist
+    #       path: dist  # Asegúrate de que "build" es tu carpeta de salida
